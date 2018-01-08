@@ -1,0 +1,70 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "5c5d29a5025ce53d402bb84f7c76a2a8",
+    "packages": [
+        {
+            "name": "sop/gcm",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sop/gcm.git",
+                "reference": "623d610c807dda3dc00474d492182ab03f4442af"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sop/gcm/zipball/623d610c807dda3dc00474d492182ab03f4442af",
+                "reference": "623d610c807dda3dc00474d492182ab03f4442af",
+                "shasum": ""
+            },
+            "require": {
+                "ext-gmp": "*",
+                "ext-openssl": "*",
+                "php": ">=7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^6.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Sop\\GCM\\": "lib/GCM/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Joni Eskelinen",
+                    "email": "jonieske@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A PHP library for Galois/Counter Mode encryption with AES.",
+            "homepage": "https://github.com/sop/gcm",
+            "keywords": [
+                "AES-GCM",
+                "Galois Counter Mode",
+                "aes",
+                "decrypt",
+                "encrypt",
+                "galois",
+                "gcm"
+            ],
+            "time": "2017-11-28T13:57:09+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}
