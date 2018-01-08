@@ -13,10 +13,6 @@ class Formater {
 		//
 	}
 
-	public static format() {
-		//
-	}
-
 	public static function duplicateResourceSubject() {
 		return "Failed to store: duplicate resource";
 	}
