@@ -54,6 +54,19 @@ if($qCount > 0 ) {
 	$mailer->notifyFailedStorage($user, $name);
 } else {
 	//Nothing found
+
+	//Get the trustees here and loop iver them. Add them in the notification email 
+	$trusteesAnd3rdParties = $_REQUEST['extras'];
+
+	$iv = Util::getIV($lucky);
+	$encrypted = Util::encrypt($secret, $iv);
+	if(Util::validateExtras($trusteesAnd3rdParties)) {
+		//There are extras
+		//Prepare a new key for all the trustees and 3rd parties
+		//store the new encrypted doc in a new table
+	} else {
+		//
+	}
 	// here we have to encrypt the content
 	$document = array( //Create a new doc
 		"id" => $id,
@@ -62,6 +75,8 @@ if($qCount > 0 ) {
 	$collection->insert($document); //Store the info
 	//Notify the user by email
 	$mailer->notifySuccessfulStorage($user, $name);
+
+	//Get the trusstees here and loop throught them
 }
 
 //If trustess and 3rdparties they need to go here
