@@ -3,6 +3,7 @@
 use Sop\GCM\GCM;
 use Sop\GCM\Cipher\AES\AES192Cipher;
 
+require('../includes/Utilities.php');
 require('../vendor/autoload.php');
 /*
 $text = "Some random content here to test";
@@ -16,7 +17,8 @@ list($cipher, $tag) = AESGCM::encrypt($text, $add, $key, $iv);
 
 //from command line 
 //openssl enc -aes-192-cbc -k secret -P
-
+echo Util::generateIV(29);
+echo "<br>";
 $plaintext = "Some random super long paragraph used in some long and long cases";
 // 192-bit encryption key
 $key = "012345678901234567890123";

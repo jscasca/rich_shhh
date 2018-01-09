@@ -1,16 +1,34 @@
 <?php
 
-$server = true;
+$debug = true;
 
-require('Mailer.php');
+require('../includes/Mailer.php');
+require('../includes/Utilities.php');
 require('../vendor/autoload.php');
+var_dump($_REQUEST);
+die();
 //do all sorts of crazy stuff
 $user = $_REQUEST['user']; //User at this stage must be an email address
+if(!Util::validateUser($user)) { //Must be email (phone in the future)
+	//
+}
 $name = $_REQUEST['name']; //Name is the name of the contents being stored
+if(!Util::validateResourceName($name)) { //Must not be empty
+	//
+}
 $content = $_REQUEST['content']; //Content is not encrypted yet
+if(!Util::validateContent($content)) { //Must be valid json
+	//
+}
 
 $luckyNumber = $_REQUEST['lucky'];
+if(!Util::validateLuckyNumber($luckyNumber)) {
+	//
+}
 $secret = $_REQUEST['secret'];
+if(!Util::validateSecret($secret)) {
+	//
+}
 
 //[OPTIONAL] Optional stuff will be configured at a later point
 //Trustees: Must have an email and a piece of code
@@ -23,26 +41,34 @@ $id = Util::getId($user, $name);
 $conn = new Mongo();
 $db = $conn->shhh;
 $collection = $db->stored;
-$q = $collection->find({"id":$id});
+//$q = $collection->find({"id":$id});
+$q = $collection->find(array("id"=>$id));
 $qCount = $q->count();
+
+$mailer = new Mailer();
+
 
 if($qCount > 0 ) {
 	//there is at least one doc
 	//Notify by email that it is already taken
+	$mailer->notifyFailedStorage($user, $name);
 } else {
 	//Nothing found
+	// here we have to encrypt the content
 	$document = array( //Create a new doc
 		"id" => $id,
 		"content" => $content
 	);
 	$collection->insert($document); //Store the info
 	//Notify the user by email
+	$mailer->notifySuccessfulStorage($user, $name);
 }
 
-//If trustess and 3rdparties they need to go her
+//If trustess and 3rdparties they need to go here
 $conn->close();
 
 // if found email them that it failed
 
 //if not found store this new one and email them that 
+header("Location: stored.html");
 ?>

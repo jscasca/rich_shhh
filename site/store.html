@@ -1,8 +1,8 @@
 <html>
 	<head>
 		<!-- head -->
-		<script src="./bootstrap.min.js"></script>
-		<link rel="stylesheet" href="./bootstrap.min.css">
+		<script src="./js/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="./css/bootstrap.min.css">
 		<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script> -->
 		<style>
 		.label-input, input.label-input:focus {
@@ -16,19 +16,21 @@
 	<body>
 		<div class="container">
 			<div class="form">
+			<form action="store.php" method="post" id="form">
 				<!-- form -->
 				<div class="user" id="user">
 					<!-- user -->
 					<div class="form-group">
 						<label for="user">User</label>
-						<input type="text" class="form-control" id="user" placeholder="User">
+						<input type="text" class="form-control" id="user" name="user" placeholder="User">
 					</div>
 					<div class="form-group">
 						<label for="name">Name</label>
-						<input type="text" class="form-control" id="name" placeholder="Entry name">
+						<input type="text" class="form-control" id="name" name="name" placeholder="Entry name">
 					</div>
 				</div>
 				<div class="content" id="content">
+					<input type="hidden" name="content" id="content-input" />
 					<!-- Content -->
 					<!-- <div class="template-group">
 						<div class="template"></div>
@@ -54,17 +56,17 @@
 					<!-- Content -->
 					<div class="form-group">
 						<label for="user">Lucky Number</label>
-						<input type="text" class="form-control" id="lucky" placeholder="Your lucky number">
+						<input type="text" class="form-control" id="lucky" name="lucky" placeholder="Your lucky number">
 					</div>
 					<div class="form-group">
 						<label for="name">Secret</label>
-						<input type="password" class="form-control" id="secret" placeholder="A secret passphrase">
+						<input type="password" class="form-control" id="secret" name="secret" placeholder="A secret passphrase">
 					</div>
 				</div>
 				<div class="thirdparty" id="thirdparty">
 					<!-- Content -->
 					<div class="button-group">
-						<button>Skip</button>
+						<button type="button">Skip</button>
 					</div>
 					<div class="form-group">
 						<label for="user">Trustee</label>
@@ -77,9 +79,10 @@
 				</div>
 				<div class="submit">
 					<div class="button-group">
-						<button id="submit">Submit</button>
+						<button type="submit" id="submit">Submit</button>
 					</div>
 				</div>
+			</form>
 			</div>
 		</div>
 	</body>
@@ -139,21 +142,20 @@ function getSecret() {
 	return document.getElementById("secret").value;
 }
 
-function encryptAndSubmit() {
-	//
+function validateContent(e) {
 	var contentContainer = document.getElementById("content");
 	var content = jsonify(contentContainer);
-	var lucky = getLuckyNumber();
-	var secret = getSecret();
-	var encrypted = encrypt(content, key, times)
-;}
+	document.getElementById("content-input").value = content;
+	alert("jsonifying content");
+	//e.preventDefault();
+}
 
 function load() {
 	var addFieldButton = document.getElementById("addFieldButton");
 	addFieldButton.addEventListener("click", function(){ addField(addFieldButton);}, false);
 
-	var submitButton = document.getElementById("submit");
-	submitButton.addEventListener("click", function() { encryptAndSubmit();}, false);
+	var form = document.getElementById("form");
+	form.addEventListener("submit", function(e) { validateContent(e);}, false)
 }
 
 document.addEventListener("DOMContentLoaded", load, false);

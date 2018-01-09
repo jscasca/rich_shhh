@@ -1,10 +1,5 @@
 <?php
 
-if(!isset($server) || !$server) {
-	header("HTTP/1.1 404 Not Found");
-	die();
-}
-
 class Formater {
 
 	private static $base = "";
