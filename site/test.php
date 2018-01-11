@@ -14,10 +14,15 @@ $iv = openssl_random_pseudo_bytes(12);
 list($cipher, $tag) = AESGCM::encrypt($text, $add, $key, $iv);
 */
 //echo bin2hex($cipher)."<br>".bin2hex($tag)."<br>".bin2hex($iv);
-
+//var_dump(Util::contentAndTag("0123456789:123456"));
+$content = "{some:code, here:with, super:long, json:{result:value}}";
+$encrypted = Util::encrypt($content, "mysecret", "27");
+var_dump($encrypted);
+$decrypted = Util::decrypt($encrypted, "mysecret", "27");
+var_dump($decrypted);
 //from command line 
 //openssl enc -aes-192-cbc -k secret -P
-echo Util::generateIV(29);
+/*echo Util::generateIV(29);
 echo "<br>";
 $plaintext = "Some random super long paragraph used in some long and long cases";
 // 192-bit encryption key
@@ -33,6 +38,6 @@ list($ciphertext, $auth_tag) = $gcm->encrypt($plaintext, "", $key, $iv);
 $plain = $gcm->decrypt($ciphertext, $auth_tag, "", $key, $iv);
 // and the initialization vector
 echo bin2hex($ciphertext) . "<br>" . bin2hex($auth_tag) . "<br>" . bin2hex($iv) . "<br>" . $plain .
-     "<br>";
+     "<br>";*/
 
 ?>

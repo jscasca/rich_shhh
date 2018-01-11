@@ -1,12 +1,15 @@
 <?php
 
-$server = true;
-
 require('Utilities.php');
 
-//get the user and name
-$user = $_REQUEST['user'];
-$name = $_REQUEST['name'];
+$user = $_REQUEST['user']; //User at this stage must be an email address
+if(!Util::validateUser($user)) { //Must be email (phone in the future)
+	fail();
+}
+$name = $_REQUEST['name']; //Name is the name of the contents being stored
+if(!Util::validateResourceName($name)) { //Must not be empty
+	fail();
+}
 
 $id = Util::getId($user, $name);
 
@@ -36,8 +39,7 @@ if($qCount > 0 ) {
 	$accesible->insert($document);
 	//Notify the user that their resource is ready to access and give them the new code
 } else {
-	//Nothing found
-	//Notify the user by email: Someone tried accessing this resource that does not exist
+	$mailer->notifyMissingRetrieval($user, $name);
 }
 
 $conn->close();
