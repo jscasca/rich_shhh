@@ -1,0 +1,57 @@
+<html>
+	<head>
+		<!-- head -->
+		<script src="./js/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="./css/bootstrap.min.css">
+		<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script> -->
+		<style>
+		.label-input, input.label-input:focus {
+			background: none repeat scroll 0 0 transparent;
+			border: medium none !important;
+			color: #000000;
+			outline: none;
+		}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div class="form">
+			<form action="retrieve.php" method="post" id="form">
+				<!-- form -->
+				<div class="user" id="user">
+					<!-- user -->
+					<div class="form-group">
+						<label for="user">User</label>
+						<input type="text" class="form-control" id="user" name="user" placeholder="User">
+					</div>
+					<div class="form-group">
+						<label for="name">Name</label>
+						<input type="text" class="form-control" id="name" name="name" placeholder="Entry name">
+					</div>
+				</div>
+				<div class="submit">
+					<div class="button-group">
+						<button type="submit" id="submit">Submit</button>
+					</div>
+				</div>
+			</form>
+			</div>
+		</div>
+	</body>
+</html>
+<script>
+
+
+function validateContent(e) {
+	//e.preventDefault();
+}
+
+function load() {
+
+	var form = document.getElementById("form");
+	form.addEventListener("submit", function(e) { validateContent(e);}, false)
+}
+
+document.addEventListener("DOMContentLoaded", load, false);
+	//
+</script>

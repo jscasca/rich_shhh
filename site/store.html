@@ -68,13 +68,21 @@
 					<div class="button-group">
 						<button type="button">Skip</button>
 					</div>
-					<div class="form-group">
-						<label for="user">Trustee</label>
-						<input type="text" class="form-control" id="user" placeholder="User">
+					<div class="trustees">
+						<div class="form-group">
+							<label for="user">Trustee</label>
+							<input type="text" class="form-control trustee" placeholder="User">
+						</div>
 					</div>
-					<div class="form-group">
-						<label for="name">3rd Party</label>
-						<input type="text" class="form-control" id="name" placeholder="Entry name">
+					<div class="witnesses">
+						<div class="form-group">
+							<label for="name">Witness</label>
+							<input type="text" class="form-control witness" placeholder="Entry name">
+						</div>
+					</div>
+					<div class="button-group">
+						<button id="addTrusteeButton">Add trustee</button>
+						<button id="addWitnessButton">Add witness</button>
 					</div>
 				</div>
 				<div class="submit">
@@ -97,8 +105,6 @@ function encrypt(string, key, times) {
 	return encrypted;
 }
 
-function encryptForTrustees() {}
-
 function jsonify(containerElement) {
 	//returns a json of the content area
 	var current = {};
@@ -119,6 +125,25 @@ function jsonify(containerElement) {
 	return current;
 }
 
+function addFields(div, label, type) {
+	var holder = document.getElementById(div);
+	formGroup = newFormGroup("Trustee", "trustee");
+	holder.append(formGroup);
+}
+
+function newFormGroup(name, type) {
+	var formGroup = document.createElement("div");
+	formGroup.className = "form-group";
+	var label = document.createElement("label");
+	label.innerHtml = name;
+	var input = document.createElement("input");
+	input.className = "form-control " + type;
+	formGroup.append(label);
+	formGroup.append(input);
+	return formGroup
+
+}
+
 function addField(buttonElement) {
 	//make new field
 	var holder = buttonElement.parentElement;
@@ -134,25 +159,21 @@ function addField(buttonElement) {
 	holder.parentElement.insertBefore(formGroup, holder);
 }
 
-function getLuckyNumber() {
-	return document.getElementById("lucky").value;
-}
-
-function getSecret() {
-	return document.getElementById("secret").value;
-}
-
 function validateContent(e) {
 	var contentContainer = document.getElementById("content");
-	var content = jsonify(contentContainer);
+	var content = JSON.stringify(jsonify(contentContainer));
 	document.getElementById("content-input").value = content;
-	alert("jsonifying content");
 	//e.preventDefault();
 }
 
 function load() {
 	var addFieldButton = document.getElementById("addFieldButton");
 	addFieldButton.addEventListener("click", function(){ addField(addFieldButton);}, false);
+
+	var addTrusteeButton = document.getElementById("addTrusteeButton");
+	addTrusteeButton.addEventListener("click", function(){ addFields("trustees","Trustee","trustee");}, false);
+	var addWitnessButton = document.getElementById("addWitnessButton");
+	addWitnessButton.addEventListener("click", function(){ addFields("witnesses","Witness","witness");}, false);
 
 	var form = document.getElementById("form");
 	form.addEventListener("submit", function(e) { validateContent(e);}, false)

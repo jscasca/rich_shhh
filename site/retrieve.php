@@ -1,6 +1,8 @@
 <?php
 
-require('Utilities.php');
+require('../includes/Mailer.php');
+require('../includes/Congo.php');
+require('../includes/Utilities.php');
 
 $user = $_REQUEST['user']; //User at this stage must be an email address
 if(!Util::validateUser($user)) { //Must be email (phone in the future)
@@ -13,36 +15,34 @@ if(!Util::validateResourceName($name)) { //Must not be empty
 
 $id = Util::getId($user, $name);
 
+$mailer = new Mailer();
+
 // hash it and query the item
-$conn = new Mongo();
-$db = $conn->shhh;
+$conn = new Congo();
+$q = $conn->query("stored",array("id"=>$id));
 
-// Look for db of entries!! Check if this session has many attempts
-$access = $db->access; // DB: access stores the client information
-// TODO: think of how to check for user sessions
-$collection = $db->stored;
-$q = $collection->find({"id":$id});
-$qCount = $q->count();
-
-if($qCount > 0 ) {
+if($q->hasResults()) {
 	//there is at least one doc
-	//Preapre a new code
-	$code = Util::getUniqueCode();
+	//retrieve the doc
+	$r = $q->getFirst();
+	$key = Util::generateLocalKey();
+	$iv = Util::generateLocalIv();
+	$encrypted = Util::encrypt($r->content, $key, $iv);
+	$expires = Util::getExpirationDate();
 	//Notify by email and prepare by inserting in the new db
-	$accesible = $db->accesible;
 	$document = array(
 		//
-		"id" => $thecodewejustmadeup,
-		"content" => $contentqueried,
-		"expires" => $anhourfromnow
+		"id" => $key,
+		"content" => bin2hex($encrypted),
+		"expires" => $expires
 	);
-	$accesible->insert($document);
+	$conn->insert("accessible", $document);
 	//Notify the user that their resource is ready to access and give them the new code
+	$link = "validate.php?i=$key&code=$iv";
+	$mailer->notifyResourceReady($user, $name, $link);
 } else {
 	$mailer->notifyMissingRetrieval($user, $name);
 }
-
-$conn->close();
 
 //let the user know
 header("Location: retrieved.html");
