@@ -23,15 +23,6 @@ class Util {
 		list($ciphertext, $auth_tag) = self::contentAndTag($content);
 		$gcm = new GCM(new AES192Cipher(), 13);
 		return $gcm->decrypt($ciphertext, $auth_tag, "", self::getKey($secret, $lucky), self::getIv($lucky));
-//$key = "my random key";
-// random 128-bit initialization vector
-/*$iv = openssl_random_pseudo_bytes(16);
-// configure GCM object with AES-192 cipher and 13-bytes long authentication tag
-$gcm = new GCM(new AES192Cipher(), 13);
-// encrypt and generate authentication tag
-list($ciphertext, $auth_tag) = $gcm->encrypt($plaintext, "", $key, $iv);
-// print the ciphertext along with the authentication tag
-$plain = $gcm->decrypt($ciphertext, $auth_tag, "", $key, $iv);*/
 	}
 
 	public static function validateUser($user) {
@@ -54,6 +45,10 @@ $plain = $gcm->decrypt($ciphertext, $auth_tag, "", $key, $iv);*/
 		return $secret != "";
 	}
 
+	public static function validateExtras($extras) {
+		return false;
+	}
+
 	public static function getKey($secret, $lucky, $length = 24) {
 		//24 chars for 192-bits
 		return substr(md5($lucky.$secret.$lucky.$secret), 0, $length);
@@ -73,6 +68,22 @@ $plain = $gcm->decrypt($ciphertext, $auth_tag, "", $key, $iv);*/
 			$content = substr($content, 0, $pos);
 		}
 		return array($content, $tag);
+	}
+
+	public static function generateLocalKey($length = 24) {
+		$key = openssl_random_pseudo_bytes($length);
+		return bin2hex($key);
+	}
+
+	public static function generateLocalIv($length = 16) {
+		// random 128-bit initialization vector
+		$iv = openssl_random_pseudo_bytes($length);
+		return bin2hex($iv);
+	}
+
+	public static function getExpirationDate() {
+		$dt = strtotime('+1 hour');
+		return $dt;
 	}
 }
 ?>
