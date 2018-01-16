@@ -58,6 +58,7 @@ if($q->hasResults()) {
 		//Prepare a new key for all the trustees and 3rd parties
 		$key = Util::generateLocalKey();
 		$iv = Util::generateLocalIv();
+
 		//store the new encrypted doc in a new table
 	} else {
 		$document = array(
@@ -68,10 +69,13 @@ if($q->hasResults()) {
 		$mailer->notifySuccessfulStorage($user, $name);
 	}
 }
-header("Location: stored.html");
+header("HTTP/1.1 200 OK");
+//header("HTTP/1.1 404 Not Found");
+//die();
 
 function fail() {
 	header("Location: 500.html");//Throw 500 error
+	header("HTTP/1.1 500 Server Error");
 	die();
 }
 ?>

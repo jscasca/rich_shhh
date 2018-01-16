@@ -44,6 +44,10 @@ if($q->hasResults()) {
 	$mailer->notifyMissingRetrieval($user, $name);
 }
 
-//let the user know
-header("Location: retrieved.html");
+header("HTTP/1.1 200 OK");
+
+function fail() {
+	header("HTTP/1.1 500 Server Error");
+	die();
+}
 ?>

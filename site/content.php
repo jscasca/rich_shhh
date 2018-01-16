@@ -52,20 +52,26 @@ if($q->hasResults()) {
 		header("Location: validate.php");
 		die();
 	}
-	var_dump($finally);
-	$content = (array)json_decode($finally);
-	var_dump($content);
+	header("Content-Type: application/json");
+	header("HTTP/1.1 200 OK");
+	echo $finally; //Print the json string
+	die();
+	//var_dump($finally);
+	//$content = (array)json_decode($finally);
+	//var_dump($content);
 
 
 } else {
 	//figure how to let him know the resource does not exist
-	echo "The resource you are trying to access has expired";
+	header("HTTP/1.1 410 Gone");
 }
 session_destroy();
 
+//header("HTTP/1.1 404 Not Found");
+//die();
 
 function fail() {
-	header("Location: 500.html");//Throw 500 error
+	header("HTTP/1.1 500 Server Error");
 	die();
 }
 
