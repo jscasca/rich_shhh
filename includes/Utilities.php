@@ -45,8 +45,15 @@ class Util {
 		return $secret != "";
 	}
 
+	public static function extractExtras($extras) {
+		$parties = json_decode($extras, true);
+		return array($parties['trustees'], $parties['witnesses']);
+	}
+
 	public static function validateExtras($extras) {
-		return false;
+		$parties = json_decode($extras, true);
+		return isset($parties['witnesses']) && isset($parties['trustees']) && sizeOf($parties['witnesses']) > 0 && sizeOf($parties['trustees']) > 0;
+		//return $extras != "" && is_string($extras && is_array(json_decode($extras, true)));
 	}
 
 	public static function getKey($secret, $lucky, $length = 24) {
@@ -81,6 +88,72 @@ class Util {
 		return bin2hex($iv);
 	}
 
+	public static function generateTokenQuartet($n) {
+		return bin2hex(openssl_random_pseudo_bytes($n));
+	}
+
+	public static function generateWitnessIv($token, $n) {
+		$witnessesKeys = [];
+		$tokenMap = [];
+		$tokenBits = str_split($token, 4);
+		for($i = 0; $i < sizeOf($tokenBits); $i++) {
+			for($j = 0; $j < $n; $j++) {
+				$size = strlen($tokenBits[$i]);
+				if($size != 1) {
+					$next = self::insertInScramble($tokenBits[$i], self::generateTokenQuartet($size - 1));
+					while(isset($tokenMap[$i][$next])) {
+						$next = self::insertInScramble($tokenBits[$i], self::generateTokenQuartet($size - 1));
+					}
+					$tokenMap[$i][$next] = $next;
+				} else {
+					$next = $tokenBits[$i];
+				}
+				$witnessesKeys[$j][$i] = $next; 
+			}
+		}
+		foreach($witnessesKeys as $key=>$val) {
+			$keyMap[] = implode('',$witnessesKeys[$key]);
+		}
+		return $keyMap;
+	}
+
+	public static function insertInScramble($code, $padding) {
+		$chars = str_split($padding);
+		$where = random_int(0,5);
+		array_splice($chars, $where, 0, $code);
+		return implode('', $chars);
+	}
+
+	public static function getWitnessIv($list) {
+		if(sizeOf($list) < 2) {
+			throw new Error('Not enoguh lists');
+		}
+		$shards = str_split($list[0], 10);
+		$base = str_split($list[1], 10);
+		$key = "";
+		foreach($shards as $i => $shard) {
+			var_dump($shard);
+			var_dump($i);
+			$len = strlen($shard);
+			var_dump($len);
+			switch($len) {
+				case 10: $size = 4; break;
+				case 7: $size = 3; break;
+				case 4: $size = 2; break;
+				case 1: $size = 1; break;
+				default: throw new Error('Weird key');
+			}
+			for($j = 0; $j < ($len + 1) - $size; $j++) {
+				$buff = substr($shard, $j, $size);
+				if(strpos($base[$i], $buff) !== false) {
+					$key.=$buff;
+					break;
+				}
+			}
+		}
+		return $key;
+	}
+
 	public static function getExpirationDate() {
 		$dt = strtotime('+1 hour');
 		return $dt;
@@ -103,6 +176,18 @@ class Util {
 			$ip = $server['REMOTE_ADDR'];
 		}
 		return $ip;
+	}
+
+	public static function encodeTrustees($id, $trustees) {
+		$encoded = [];
+		foreach($trustees as $trustee) {
+			$encoded[] = self::getTrusteeHash($id, $trustee);
+		}
+		return $encoded;
+	}
+
+	public static function getTrusteeHash($id, $trustee){
+		return md5($id . $trustee);
 	}
 }
 ?>

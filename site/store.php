@@ -52,7 +52,8 @@ $logUserQuery = $conn->query("access_log",
 		'$or' => array('target' => $user, 'src' => $ip),
 		'failed' => true
 		));
-if($q->countResults() > MAX_ACCESS_LOG) {
+
+if($logUserQuery->countResults() > MAX_ACCESS_LOG) {
 	//mark as a failed attemp and die
 	$logEntry['failed'] = true;
 	$conn->insert("access_log", $logEntry);
@@ -81,21 +82,44 @@ if($q->hasResults()) {
 	//Get the trustees here and loop iver them. Add them in the notification email 
 	$extras = $_REQUEST['extras'];
 
-	$encrypted = Util::encrypt($content, $secret, $lucky);
+	$encrypted = Util::encrypt($content, $secret, $lucky); //Encrypt content
+	$document = array(
+		"id" => $id,
+		"content" => bin2hex($encrypted)
+	); //Prepare the document to store
+	$conn->insert("stored", $document); //Store the original in db.stored
 	if(Util::validateExtras($extras)) {
 		//There are extras
-		list($claimers, $witnesses) = Util::extractExtras($extras);
+		list($trustees, $witnesses) = Util::extractExtras($extras);
 		//Prepare a new key for all the trustees and 3rd parties
 		$key = Util::generateLocalKey();
 		$iv = Util::generateLocalIv();
+		//
+		$extraEncrypted = Util::encrypt($content, $key, $iv); // Encrypt the content for the trustees
+
+		$encodedTrustees = Util::encodeTrustees($id, $trustees); //Hash the trustees to store in db
+
+		$claimableDoc = array(
+			"id" => $id,
+			"content" => bin2hex($extraEncrypted),
+			"trustees" => $encodedTrustees
+			); // Prepare document to store as claimable
+		$conn->insert("claimable", $claimableDoc); //Store the claimable doc in db.claimable
 
 		//store the new encrypted doc in a new table
+		$mailer->notifySuccessfulStorageWithTrustees($user, $name, $trustees, $witnesses);
+		$mailer->notifyTrustees($trustees, $user, $name, $key);
+		if(sizeOf($witnesses) < 2) {
+			//dont break keys just send one
+			$mailer->notifyWitness($witnesses[0], $user, $name, $iv);
+		} else {
+			$ivs = Util::generateWitnessIv($iv,sizeOf($witnesses));
+			foreach($witnesses as $i=>$witness) {
+				$mailer->notifyWitness($witness, $user, $name, $ivs[$i]);
+			}
+			//break keys
+		}
 	} else {
-		$document = array(
-			"id" => $id,
-			"content" => bin2hex($encrypted)
-		);
-		$conn->insert("stored", $document);
 		$mailer->notifySuccessfulStorage($user, $name);
 	}
 }

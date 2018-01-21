@@ -17,6 +17,20 @@ class Mailer {
 		$this->sendMail($to, $f->subject(), $f->plainContent(), $f->htmlContent());
 	}
 
+	public function notifySuccessfulStorageWithTrustees($to, $name, $trustees, $witnesses) {
+		//TODO: implement
+		//$f = new StoredFormater($name);
+		//$this->sendMail($to, $f->subject(), $f->plainContent(), $f->htmlContent());
+	}
+
+	public function notifyTrustees($trustees, $user, $name, $key) {
+		//TODO: Let know the trustees that there is a doc available and accessible with the following key
+	}
+
+	public function notifyWitness($witnes, $user, $name, $iv) {
+		//TODOL Let the witness know that he has been selected as a witness
+	}
+
 	public function notifyFailedStorage($to, $name) {
 		$f = new DuplicateFormater($name);
 		$this->sendMail($to, $f->subject(), $f->plainContent(), $f->htmlContent());

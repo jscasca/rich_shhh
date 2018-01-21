@@ -1,5 +1,7 @@
 <?php
 
+define('MAX_ACCESS_LOG', 6);
+
 require('../includes/Mailer.php');
 require('../includes/Congo.php');
 require('../includes/Utilities.php');
@@ -15,10 +17,27 @@ if(!Util::validateResourceName($name)) { //Must not be empty
 
 $id = Util::getId($user, $name);
 
+$conn = new Congo();
+
+$lastHour = Util::getLastHour();
+$logUserQuery = $conn->query("access_log", 
+	array(
+		'time' => array('$gt' => $lastHour),
+		'$or' => array('target' => $user, 'src' => $ip),
+		'failed' => true
+		));
+
+if($logUserQuery->countResults() > MAX_ACCESS_LOG) {
+	//mark as a failed attemp and die
+	$logEntry['failed'] = true;
+	$conn->insert("access_log", $logEntry);
+	header()
+	die();
+}
+
 $mailer = new Mailer();
 
 // hash it and query the item
-$conn = new Congo();
 $q = $conn->query("stored",array("id"=>$id));
 
 if($q->hasResults()) {
