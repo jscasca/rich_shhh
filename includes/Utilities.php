@@ -85,5 +85,24 @@ class Util {
 		$dt = strtotime('+1 hour');
 		return $dt;
 	}
+
+	public static function getCurrentTime() {
+		return strtotime('now');
+	}
+
+	public static function getLastHour() {
+		return strtotime('-1 hour');
+	}
+
+	public static function getIP($server) {
+		if(!empty($server['HTTP_CLIENT_IP'])) {
+			$ip = $server['HTTP_CLIENT_IP'];
+		} else if(!empty($server['HTTP_X_FORWARDED_FOR'])) {
+			$ip = $server['HTTP_X_FORWARDED_FOR'];
+		} else {
+			$ip = $server['REMOTE_ADDR'];
+		}
+		return $ip;
+	}
 }
 ?>

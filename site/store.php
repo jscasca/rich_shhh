@@ -2,6 +2,8 @@
 
 $debug = true;
 
+define('MAX_ACCESS_LOG', 6);
+
 require('../includes/Congo.php');
 require('../includes/Mailer.php');
 require('../includes/Utilities.php');
@@ -30,6 +32,35 @@ if(!Util::validateSecret($secret)) {
 	fail();
 }
 
+/**
+IP validation for max retiress and user requests
+*/
+$time = Util::getCurrentTime();
+$ip = Util::getIP($_SERVER);
+$logEntry = array(
+	"target"=>$user,
+	"src"=>$ip,
+	"time"=>$time,
+	"site"=>'storage'
+	);
+
+$conn = new Congo();
+$lastHour = Util::getLastHour();
+$logUserQuery = $conn->query("access_log", 
+	array(
+		'time' => array('$gt' => $lastHour),
+		'$or' => array('target' => $user, 'src' => $ip),
+		'failed' => true
+		));
+if($q->countResults() > MAX_ACCESS_LOG) {
+	//mark as a failed attemp and die
+	$logEntry['failed'] = true;
+	$conn->insert("access_log", $logEntry);
+	header()
+	die();
+}
+//$con->delete("accessible", array("expires"=>array('$lt'=>$expired)));
+
 //[OPTIONAL] Optional stuff will be configured at a later point
 //Trustees: Must have an email and a piece of code
 //3rd Party: Must have an email and a piece of code
@@ -38,7 +69,6 @@ if(!Util::validateSecret($secret)) {
 $id = Util::getId($user, $name);
 
 //look for the element in db
-$conn = new Congo();
 $q = $conn->query("stored",array("id"=>$id));
 
 $mailer = new Mailer();
@@ -74,8 +104,12 @@ header("HTTP/1.1 200 OK");
 //die();
 
 function fail() {
-	header("Location: 500.html");//Throw 500 error
-	header("HTTP/1.1 500 Server Error");
+	header("HTTP/1.1 400 Bad Request");
+	die();
+}
+
+function failSilent() {
+	header("HTTP/1.1 200 OK");
 	die();
 }
 ?>

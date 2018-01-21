@@ -13,21 +13,25 @@ class Mailer {
 	}
 
 	public function notifySuccessfulStorage($to, $name) {
-		$subject = Formater::storeSubject();
-		$plainContent = Formater::storePlainContent($name);
-		$htmlContent = Formater::storeHtmlContent($name);
-		$this->sendMail($to, $subject, $plainContent, $htmlContent);
+		$f = new StoredFormater($name);
+		$this->sendMail($to, $f->subject(), $f->plainContent(), $f->htmlContent());
 	}
 
 	public function notifyFailedStorage($to, $name) {
-		$subject = Formater::duplicateResourceSubject();
-		$plainContent = Formater::duplicateResourcePlainContent($name);
-		$htmlContent = Formater::duplicateResourceHtmlContent($name);
-		$this->sendMail($to, $subject, $plainContent, $htmlContent);
+		$f = new DuplicateFormater($name);
+		$this->sendMail($to, $f->subject(), $f->plainContent(), $f->htmlContent());
 	}
 
 	public function notifyMissingRetrieval($to, $name) {
 		//Someone tried to access a resource on your user that does not exist
+		$f = new MissingFormater($name);
+		$this->sendMail($to, $f->subject(), $f->plainContent(), $f->htmlContent());
+	}
+
+	public function notifyResourceReady($to, $name, $link) {
+		//
+		$f = new ReadyFormater($name, $link);
+		$this->sendMail($to, $f->subject(), $f->plainContent(), $f->htmlContent());
 	}
 
 	public function sendMail($to, $subject, $plainContent, $htmlContent) {
