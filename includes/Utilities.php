@@ -45,9 +45,19 @@ class Util {
 		return $secret != "";
 	}
 
+	public static function validateFragments($fragments) {
+		return is_array($fragments) && sizeOf($fragments)>0;
+	}
+
 	public static function extractExtras($extras) {
 		$parties = json_decode($extras, true);
 		return array($parties['trustees'], $parties['witnesses']);
+	}
+
+	public static function getFragments($request) {
+		$fromString = json_decode($request, true);
+		if(is_array($fromString)) return $fromString;
+		else return array($request);
 	}
 
 	public static function validateExtras($extras) {
@@ -126,7 +136,7 @@ class Util {
 
 	public static function getWitnessIv($list) {
 		if(sizeOf($list) < 2) {
-			throw new Error('Not enoguh lists');
+			return $list[0];
 		}
 		$shards = str_split($list[0], 10);
 		$base = str_split($list[1], 10);
@@ -154,9 +164,17 @@ class Util {
 		return $key;
 	}
 
+	public static function getClaimExpiration() {
+		return strtotime('+30 days');
+	}
+
 	public static function getExpirationDate() {
 		$dt = strtotime('+1 hour');
 		return $dt;
+	}
+
+	public static function getLongExpirationDate() {
+		return strtotime('+48 hours');
 	}
 
 	public static function getCurrentTime() {

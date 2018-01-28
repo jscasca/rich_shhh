@@ -1,7 +1,5 @@
 <?php
 
-$debug = true;
-
 define('MAX_ACCESS_LOG', 6);
 
 require('../includes/Congo.php');
@@ -32,9 +30,12 @@ if(!Util::validateSecret($secret)) {
 	fail();
 }
 
+
+$con = new Congo();
 /**
 IP validation for max retiress and user requests
 */
+/*
 $time = Util::getCurrentTime();
 $ip = Util::getIP($_SERVER);
 $logEntry = array(
@@ -44,9 +45,8 @@ $logEntry = array(
 	"site"=>'storage'
 	);
 
-$conn = new Congo();
 $lastHour = Util::getLastHour();
-$logUserQuery = $conn->query("access_log", 
+$logUserQuery = $con->query("access_log", 
 	array(
 		'time' => array('$gt' => $lastHour),
 		'$or' => array('target' => $user, 'src' => $ip),
@@ -56,21 +56,16 @@ $logUserQuery = $conn->query("access_log",
 if($logUserQuery->countResults() > MAX_ACCESS_LOG) {
 	//mark as a failed attemp and die
 	$logEntry['failed'] = true;
-	$conn->insert("access_log", $logEntry);
+	$con->insert("access_log", $logEntry);
 	header()
 	die();
-}
-//$con->delete("accessible", array("expires"=>array('$lt'=>$expired)));
-
-//[OPTIONAL] Optional stuff will be configured at a later point
-//Trustees: Must have an email and a piece of code
-//3rd Party: Must have an email and a piece of code
+}*/
 
 //get the id = hash( user + name)
 $id = Util::getId($user, $name);
 
 //look for the element in db
-$q = $conn->query("stored",array("id"=>$id));
+$q = $con->query("stored",array("id"=>$id));
 
 $mailer = new Mailer();
 
@@ -87,7 +82,7 @@ if($q->hasResults()) {
 		"id" => $id,
 		"content" => bin2hex($encrypted)
 	); //Prepare the document to store
-	$conn->insert("stored", $document); //Store the original in db.stored
+	$con->insert("stored", $document); //Store the original in db.stored
 	if(Util::validateExtras($extras)) {
 		//There are extras
 		list($trustees, $witnesses) = Util::extractExtras($extras);
@@ -104,9 +99,8 @@ if($q->hasResults()) {
 			"content" => bin2hex($extraEncrypted),
 			"trustees" => $encodedTrustees
 			); // Prepare document to store as claimable
-		$conn->insert("claimable", $claimableDoc); //Store the claimable doc in db.claimable
+		$con->insert("claimable", $claimableDoc); //Store the claimable doc in db.claimable
 
-		//store the new encrypted doc in a new table
 		$mailer->notifySuccessfulStorageWithTrustees($user, $name, $trustees, $witnesses);
 		$mailer->notifyTrustees($trustees, $user, $name, $key);
 		if(sizeOf($witnesses) < 2) {

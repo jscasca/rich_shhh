@@ -6,6 +6,11 @@ require('../includes/Mailer.php');
 require('../includes/Congo.php');
 require('../includes/Utilities.php');
 
+function fail() {
+	header("HTTP/1.1 500 Server Error");
+	die();
+}
+
 $user = $_REQUEST['user']; //User at this stage must be an email address
 if(!Util::validateUser($user)) { //Must be email (phone in the future)
 	fail();
@@ -18,7 +23,7 @@ if(!Util::validateResourceName($name)) { //Must not be empty
 $id = Util::getId($user, $name);
 
 $conn = new Congo();
-
+/*
 $lastHour = Util::getLastHour();
 $logUserQuery = $conn->query("access_log", 
 	array(
@@ -33,7 +38,7 @@ if($logUserQuery->countResults() > MAX_ACCESS_LOG) {
 	$conn->insert("access_log", $logEntry);
 	header()
 	die();
-}
+}*/
 
 $mailer = new Mailer();
 
@@ -56,7 +61,7 @@ if($q->hasResults()) {
 		"expires" => $expires
 	);
 	$conn->insert("accessible", $document);
-	//Notify the user that their resource is ready to access and give them the new code
+	//Notify the user that hteir resource is ready to access and give them the new code
 	$link = "validate.php?i=$key&code=$iv";
 	$mailer->notifyResourceReady($user, $name, $link);
 } else {
@@ -64,9 +69,4 @@ if($q->hasResults()) {
 }
 
 header("HTTP/1.1 200 OK");
-
-function fail() {
-	header("HTTP/1.1 500 Server Error");
-	die();
-}
 ?>

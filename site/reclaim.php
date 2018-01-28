@@ -1,5 +1,4 @@
 <?php
-//validate the link
 
 if(!isset($_REQUEST['i']) || !isset($_REQUEST['code'])) {
 	header("HTTP/1.1 404 Not Found");
@@ -10,6 +9,6 @@ session_start();
 $_SESSION['i'] = $_REQUEST['i'];
 $_SESSION['code'] = $_REQUEST['code'];
 
-header("Location: validate.html");
+header("Location: reclaim.html");
 
 ?>

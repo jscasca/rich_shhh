@@ -4,9 +4,15 @@ require('../includes/Congo.php');
 require('../includes/Mailer.php');
 require('../includes/Utilities.php');
 require('../vendor/autoload.php');
+
+function fail() {
+	header("HTTP/1.1 400 Bad Request");
+	die();
+}
+
 session_start();
 
-if(!isset($_SESSION['i']) || !isset($_SESSION['code']) || !isset($_SESSION['counter'])) {
+if(!isset($_SESSION['i']) || !isset($_SESSION['code'])) {
 	session_destroy();
 	header("HTTP/1.1 404 Not Found");
 	die();
@@ -41,7 +47,7 @@ if($q->hasResults()) {
 	} catch(Exception $e) {
 		//If this fails the resource was not valid
 		session_destroy();
-		header("HTTP/1.1 401 Forbidden");
+		header("HTTP/1.1 401 Unauthorized");
 		die();
 	}
 
@@ -49,7 +55,8 @@ if($q->hasResults()) {
 		$finally = Util::decrypt($locallyDecrypted, $secret, $lucky);
 	} catch(Exception $e) {
 		//if this fails the user/pass was incorrect and we might give him another chance
-		header("Location: validate.php");
+		//Give them a second chance
+		header("HTPP/1.1 403 Forbidden");
 		die();
 	}
 	header("Content-Type: application/json");
@@ -69,10 +76,5 @@ session_destroy();
 
 //header("HTTP/1.1 404 Not Found");
 //die();
-
-function fail() {
-	header("HTTP/1.1 500 Server Error");
-	die();
-}
 
 ?>

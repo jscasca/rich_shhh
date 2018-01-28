@@ -48,6 +48,30 @@ class Mailer {
 		$this->sendMail($to, $f->subject(), $f->plainContent(), $f->htmlContent());
 	}
 
+	public function notifyClaimReady($to, $link) {
+		$f = new ClaimReadyFormater($link);
+		$this->sendMail($to, $f->subject(), $f->plainContent(), $f->htmlContent());
+	}
+
+	public function notifyTrusteeAboutDenial($to) {
+		//The claim $code has been denied by the owner
+	}
+
+	public function notifyTrusteeAboutPending($to) {
+		//The resource is pending to be claimed you will be notified once the resource is ready
+	}
+
+	public function notifyOwnerAboutClaim($to, $link, $trustee) {
+		//The resource has been claimed by $trustee, you can deny this claim by following this link
+	}
+
+	public function notifyOwnerAboutDenial($to, $code) {
+		//Claim with code $code has been denied properly
+	}
+
+	//$mailer->notifyOwnerAboutClaim($user, $name, $trustee);
+	//$mailer->notifyTrusteeAboutPending($trustee, $name);
+
 	public function sendMail($to, $subject, $plainContent, $htmlContent) {
 		//
 		$data = array(
