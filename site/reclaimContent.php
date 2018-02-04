@@ -1,5 +1,9 @@
 <?php
 
+header('Access-Control-Allow-Origin: http://localhost:3000', false);
+header('Access-Control-Allow-Methods: POST,GET', false);
+header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept', false);
+
 require('../includes/Congo.php');
 require('../includes/Mailer.php');
 require('../includes/Utilities.php');
@@ -20,14 +24,13 @@ session_start();
 
 $con = new Congo();
 
-if(!isset($_SESSION['i']) || !isset($_SESSION['code'])) {
-	session_destroy();
+if(!isset($_REQUEST['i']) || !isset($_REQUEST['code'])) {
 	header("HTTP/1.1 404 Not Found");
 	die();
 }
 
-$key = $_SESSION['i'];
-$iv = $_SESSION['code'];
+$key = $_REQUEST['i'];
+$iv = $_REQUEST['code'];
 
 $secret = $_REQUEST['secret'];
 if(!Util::validateSecret($secret)) {
@@ -35,7 +38,10 @@ if(!Util::validateSecret($secret)) {
 }
 
 $fragments = Util::getFragments($_REQUEST['fragments']);
-if(!Util::validateFragments()) {
+if(!is_array($fragments)) {
+	$fragments = array($fragments);
+}
+if(!Util::validateFragments($fragments)) {
 	fail();
 }
 

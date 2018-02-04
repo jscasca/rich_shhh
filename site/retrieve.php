@@ -1,5 +1,9 @@
 <?php
 
+header('Access-Control-Allow-Origin: http://localhost:3000', false);
+header('Access-Control-Allow-Methods: POST,GET,OPTIONS', false);
+header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept', false);
+
 define('MAX_ACCESS_LOG', 6);
 
 require('../includes/Mailer.php');

@@ -9,6 +9,6 @@ session_start();
 $_SESSION['i'] = $_REQUEST['i'];
 $_SESSION['code'] = $_REQUEST['code'];
 
-header("Location: reclaim.html");
+header("Location: http://localhost:3000/claim?i=".$_REQUEST['i']."&code=".$_REQUEST['code']);
 
 ?>

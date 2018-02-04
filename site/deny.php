@@ -38,10 +38,12 @@ if($q->hasResults()) {
 	//Notify owner
 } else {
 	//Resource does not exist
-	gone(); //log and notify if needed
+	//gone(); //log and notify if needed
 }
 
-header("HTTP/1.1 200 OK");
+header("Location: http://localhost:3000/claim?i=".$_REQUEST['i']."&code=".$_REQUEST['code']);
+
+//header("HTTP/1.1 200 OK");
 
 // ask the owner for the kill switch signal
 

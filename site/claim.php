@@ -56,8 +56,9 @@ if($q->hasResults()) {
 		"trustee"=>$trustee);
 	$con->insert("pending", $document);
 	//Notify trustee
-	$mailer = new Mailer();
-	$mailer->notifyOwnerAboutClaim($user, $name, $trustee);
+	$mailer = new Mailer();//Make a denial link here
+	$link = "deny.php?code=".$code;
+	$mailer->notifyOwnerAboutClaim($user, $name, $code, $link, $trustee);
 	$mailer->notifyTrusteeAboutPending($trustee, $name);
 	//Notify owner
 } else {
