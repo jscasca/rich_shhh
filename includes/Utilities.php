@@ -34,7 +34,7 @@ class Util {
 	}
 
 	public static function validateContent($content) {
-		return $content != "" && is_string($content && is_array(json_decode($content, true)));
+		return $content != "" && is_string($content) && is_array(json_decode($content, true));
 	}
 
 	public static function validateLuckyNumber($lucky) {
