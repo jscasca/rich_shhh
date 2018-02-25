@@ -51,19 +51,19 @@ class Util {
 
 	public static function extractExtras($extras) {
 		$parties = json_decode($extras, true);
-		return array($parties['trustees'], $parties['witnesses']);
+		$fTrustees = array_filter($parties['trustees'], function($x) {
+			return filter_var($x, FILTER_VALIDATE_EMAIL);
+		});
+		$fWitnesses = array_filter($parties['witnesses'], function($x) {
+			return filter_var($x, FILTER_VALIDATE_EMAIL);
+		});
+		return array($parties['trustees'], $parties['witnesses'], (sizeOf($fTrustees) > 0 && sizeOf($fWitnesses) > 0));
 	}
 
 	public static function getFragments($request) {
 		$fromString = json_decode($request, true);
 		if(is_array($fromString)) return $fromString;
 		else return array($request);
-	}
-
-	public static function validateExtras($extras) {
-		$parties = json_decode($extras, true);
-		return isset($parties['witnesses']) && isset($parties['trustees']) && sizeOf($parties['witnesses']) > 0 && sizeOf($parties['trustees']) > 0;
-		//return $extras != "" && is_string($extras && is_array(json_decode($extras, true)));
 	}
 
 	public static function getKey($secret, $lucky, $length = 24) {

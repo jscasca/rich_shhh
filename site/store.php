@@ -86,9 +86,10 @@ if($q->hasResults()) {
 		"content" => bin2hex($encrypted)
 	); //Prepare the document to store
 	$con->insert("stored", $document); //Store the original in db.stored
-	if(Util::validateExtras($extras)) {
+	list($trustees, $witnesses, $extrasAreValid) = Util::extractExtras($extras);
+	if($extrasAreValid) {
 		//There are extras
-		list($trustees, $witnesses) = Util::extractExtras($extras);
+		//list($trustees, $witnesses) = Util::extractExtras($extras);
 		//Prepare a new key for all the trustees and 3rd parties
 		$key = Util::generateLocalKey();
 		$iv = Util::generateLocalIv();
