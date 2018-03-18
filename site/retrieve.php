@@ -11,7 +11,7 @@ require('../includes/Congo.php');
 require('../includes/Utilities.php');
 
 function fail() {
-	header("HTTP/1.1 500 Server Error");
+	header("HTTP/1.1 400 Bad Request");
 	die();
 }
 
@@ -66,7 +66,7 @@ if($q->hasResults()) {
 	);
 	$conn->insert("accessible", $document);
 	//Notify the user that hteir resource is ready to access and give them the new code
-	$link = "validate.php?i=$key&code=$iv";
+	$link = "recover?i=$key&code=$iv";
 	$mailer->notifyResourceReady($user, $name, $link);
 } else {
 	$mailer->notifyMissingRetrieval($user, $name);
