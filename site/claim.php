@@ -1,5 +1,8 @@
 <?php
 //MAKE A CLAIM
+header('Access-Control-Allow-Origin: http://localhost:3000', false);
+header('Access-Control-Allow-Methods: POST,GET', false);
+header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept', false);
 define('MAX_ACCESS_LOG', 6);
 
 require('../includes/Mailer.php');
@@ -41,7 +44,7 @@ if($q->hasResults()) {
 	$r = $q->getFirst();
 	//validate the trustee is in the list
 	$allowedTrustees = $r->trustees;
-	if(!contains($allowedTrustees, $dbTrustee)) {
+	if(!in_array($dbTrustee, $allowedTrustees)) {
 		//You are not on the allowed list
 		gone(); //log about this issue
 	}
