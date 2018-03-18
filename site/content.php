@@ -3,6 +3,7 @@
 header('Access-Control-Allow-Origin: http://localhost:3000', false);
 header('Access-Control-Allow-Methods: POST,GET', false);
 header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept', false);
+
 require('../includes/Congo.php');
 require('../includes/Mailer.php');
 require('../includes/Utilities.php');
@@ -70,9 +71,8 @@ if($q->hasResults()) {
 
 } else {
 	//figure how to let him know the resource does not exist
-	header("HTTP/1.1 410 Gone");
+	header("HTTP/1.1 410 Gone");die();
 }
-session_destroy();
 
 //header("HTTP/1.1 404 Not Found");
 //die();
