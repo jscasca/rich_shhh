@@ -41,6 +41,10 @@ class Util {
 		return $lucky != "";
 	}
 
+	public static function validateCode($code) {
+		return $code != "";
+	}
+
 	public static function validateSecret($secret) {
 		return $secret != "";
 	}

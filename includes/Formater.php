@@ -78,10 +78,10 @@ class StoredFormater {
 		return "Stored properly";
 	}
 	public function plainContent() {
-		return "The resource $name was stored properly";
+		return "The resource $this->name was stored properly";
 	}
 	public function htmlContent() {
-		return "The resource <b>$name</b> was stored properly";
+		return "The resource <b>$this->name</b> was stored properly";
 	}
 }
 
@@ -131,10 +131,10 @@ class StoredWithExtrasFormater {
 		return "Your information has been secured!";
 	}
 	public function plainContent() {
-		return "The resource $name was stored properly";
+		return "The resource $this->name was stored properly";
 	}
 	public function htmlContent() {
-		return "The resource <b>$name</b> was stored properly";
+		return "The resource <b>$this->name</b> was stored properly";
 	}
 }
 
@@ -232,7 +232,7 @@ class NotifySuccessfulDenialFormater {
 }
 
 //Notify the owner that a claim has been made and provide a link to deny that claim
-class NotifyOwnerAboutClainFormater {
+class NotifyOwnerAboutClaimFormater {
 	private $name;
 	private $code;
 	private $link;
@@ -254,7 +254,8 @@ class NotifyOwnerAboutClainFormater {
 	}
 }
 
-//
+// Claim has been denied
+// Let the claimer know that the claim has been denied by the owner of the resource
 class NotifyClaimDenialFormater {
 	public function __construct() {
 	}
@@ -266,6 +267,22 @@ class NotifyClaimDenialFormater {
 	}
 	public function htmlContent() {
 		return "The owner of the content has denied your claim.";
+	}
+}
+
+// Claim has been started
+// Let the claimer know that there is a 30 days cool down period
+class NotifyTrusteeClaimStartedFormater {
+	public function __construct() {
+	}
+	public function subject() {
+		return "A claim is being processed";
+	}
+	public function plainContent() {
+		return "Your claim is being processed. The owner of the resource has 30 days to deny this claim. If the claim is not denied you will receive another email with further instructions";
+	}
+	public function htmlContent() {
+		return "Your claim is being processed. The owner of the resource has 30 days to deny this claim. If the claim is not denied you will receive another email with further instructions";
 	}
 }
 ?>
